@@ -1,0 +1,292 @@
+--[[ |------------------------------------|
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--]]|------------------------------------|
+ 
+local version = "15.8 GN1"
+local size = { term.getSize() }
+local function get(paste)
+    local paste = textutils.urlEncode(paste)
+    http.request("http://pastebin.com/raw.php?i="..paste)
+    local evnt,url,cde = os.pullEvent("http_success")
+    local code = cde.readAll()
+    cde.close()
+    if code then
+        return code
+    else
+        return false
+    end
+end
+local latest = get("FnBveF1x")
+if latest ~= false then
+    if latest ~= version then
+        term.setBackgroundColor(colors.white)
+        term.clear()
+        paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+        term.setCursorPos(1,1)
+        term.setTextColor(colors.lightGray)
+        print("New version: "..latest.." Your version: "..version)
+        term.setCursorPos(1,6)
+        term.setBackgroundColor(colors.white)
+        local starty = (size[2] - 5)
+        paintutils.drawFilledBox(1,starty,size[1],size[2],colors.cyan)
+        term.setTextColor(colors.white)
+        term.setCursorPos(4,starty + 3)
+        print("Press to update or anywhere else to continue")
+        local mse = { os.pullEvent("mouse_click") }
+        local x = mse[3]
+        local y = mse[4]
+        if y >= starty and y <= size[2] then
+            local prg = shell.getRunningProgram()
+            local new = get("0sYgdMgi")
+            fs.delete(prg)
+            local newserver = fs.open(prg,"w")
+            newserver.write(new)
+            os.reboot()
+       end
+    end
+end
+local notes = get("aWYQXFyW")
+term.setBackgroundColor(colors.white)
+term.clear()
+paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+term.setTextColor(colors.lightGray)
+term.setCursorPos(1,1)
+print("Notes: ")
+term.setBackgroundColor(colors.white)
+term.setCursorPos(1,6)
+term.setTextColor(colors.cyan)
+print(notes)
+sleep(5)
+local error_404 = "term.setBackgroundColor(colors.white) term.clear() term.setCursorPos(1,1) term.setTextColor(colors.lightGray) print('404') print('Sorry, the page was not found on the server!')"
+local error_400 = "term.setBackgroundColor(colors.white) term.clear() term.setCursorPos(1,1) term.setTextColor(colors.lightGray) print('400') print('Send bad reqest')"
+local error_403 = "term.setBackgroundColor(colors.white) term.clear() term.setCursorPos(1,1) term.setTextColor(colors.lightGray) print('403') print('Forbidden page request!')"
+local size = { term.getSize() }
+local sides = {
+    "top",
+    "bottom",
+    "back",
+    "left",
+    "right"
+}
+if not fs.exists("www") then
+    fs.makeDir("www")
+else
+    if not fs.isDir("www") then
+        fs.delete("www")
+        fs.makeDir("www")
+    end
+end
+if not fs.exists("domain_name") then
+    term.setBackgroundColor(colors.white)
+    term.clear()
+    paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+    term.setCursorPos(1,1)
+    term.setTextColor(colors.lightGray)
+    term.setBackgroundColor(colors.gray)
+    print("Setup server domain name")
+    term.setBackgroundColor(colors.white)
+    term.setCursorPos(1,6)
+    print("(adds .cc) Enter domain name: ")
+    local dmn = read()
+    local dmn = (dmn..".cc")
+    local domainf = fs.open("domain_name","w")
+    domainf.write(dmn)
+    domainf.close()
+    term.clear()
+    paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+    term.setCursorPos(1,1)
+    print("Setup server owner")
+    term.setCursorPos(1,6)
+    term.setBackgroundColor(colors.white)
+    write("Enter server owner: ")
+    local owner = read()
+    local own = fs.open("server_owner","w")
+    own.write(owner)
+    own.close()
+end
+for i = 1, #sides do
+    if peripheral.isPresent(sides[i]) then
+        if peripheral.getType(sides[i]) == "modem" then
+            local modem = peripheral.find("modem")
+            rednet.open(sides[i])
+        end
+    end
+end
+local domainf = fs.open("domain_name","r")
+local domain = domainf.readAll()
+domainf.close()
+local function webServerMain()
+    if fs.exists("404") then
+        local f404 = fs.open("404","r")
+        local error_404 = f404.readAll()
+    end
+    if fs.exists("403") then
+        local f403 = fs.open("403","r")
+        local error_403 = f403.readAll()
+    end
+    if fs.exists("400") then
+        local f400 = fs.open("400","r")
+        local error_400 = f400.readAll()
+    end
+    local evnt = { rednet.receive() }
+    local str2 = ("www/"..tostring(evnt[2]))
+    local str3 = tostring(evnt[3])
+    if str2 and str3 then
+        local dt = string.sub(str2,1,1)
+        if dt == "." then
+            rednet.send(evnt[1],error_403)
+        else
+            if #str2 < 50 then
+                if evnt[3] == domain then
+                    if fs.exists("advsettings") then
+                        local advf = fs.open("advsettings","r")
+                        local adv = advf.readAll()
+                        advf.close()
+                        if fs.exists(str2) then
+                            local codef = fs.open(str2,"r")
+                            local code = codef.readAll()
+                            codef.close()
+                            local fn = (adv.." "..code)
+                            rednet.send(evnt[1],fn)
+                        else
+                            rednet.send(evnt[1],error_404)
+                        end
+                    else
+                        if fs.exists(str2) then
+                            local codef = fs.open(str2,"r")
+                            local code = codef.readAll()
+                            codef.close()
+                            rednet.send(evnt[1],code)
+                        else
+                            rednet.send(evnt[1],error_404)
+                        end
+                    end
+                end
+            end
+        end
+    else
+        rednet.send(evnt[1],error_400)
+    end
+end
+if not fs.exists("www/index") then
+    term.setBackgroundColor(colors.white)
+    term.clear()
+    paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+    term.setCursorPos(1,1)
+    term.setTextColor(colors.lightGray)
+    print("Uh oh,")
+    term.setBackgroundColor(colors.white)
+    term.setCursorPos(1,6)
+    print("The main file, index is missing! Please create it then restart the server!")
+    term.setTextColor(colors.cyan)
+    term.setCursorPos(1,9)
+    print("Click anywhere to shutdown")
+    os.pullEvent("mouse_click")
+    os.shutdown()
+end
+local function drawMainPage()
+    term.setBackgroundColor(colors.white)
+    term.clear()
+    term.setTextColor(colors.lightGray)
+    paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+    term.setCursorPos(1,1)
+    print("Server Version: "..version)
+    paintutils.drawFilledBox(1,6,21,9,colors.cyan)
+    term.setCursorPos(3,7)
+    term.setTextColor(colors.white)
+    print("Enter Domain Name")
+    paintutils.drawFilledBox(31,6,51,9,colors.cyan)
+    term.setCursorPos(36,7)
+    print("View Details")
+    paintutils.drawFilledBox(1,11,size[1],14,colors.cyan)
+    term.setCursorPos(24,12)
+    print("Restart")
+    paintutils.drawFilledBox(1,16,size[1],19,colors.gray)
+    term.setCursorPos(23,17)
+    print("Shutdown")
+end
+local function drawDetailsPage()
+    term.setBackgroundColor(colors.white)
+    term.clear()
+    paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+    term.setCursorPos(1,1)
+    term.setTextColor(colors.lightGray)
+    print("Details")
+    term.setBackgroundColor(colors.white)
+    local domainf = fs.open("domain_name","r")
+    local domain = domainf.readAll()
+    domainf.close()
+    local ownf = fs.open("server_owner","r")
+    local owner = ownf.readAll()
+    ownf.close()
+    term.setCursorPos(1,6)
+    print("Domain name: "..domain)
+    term.setCursorPos(1,8)
+    print("Server owner: "..owner)
+    term.setCursorPos(1,10)
+    term.setTextColor(colors.cyan)
+    print("Press any key to exit")
+    os.pullEvent("char")
+    drawMainPage()
+end
+local function drawDomainPage()
+    term.setBackgroundColor(colors.white)
+    term.clear()
+    paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
+    term.setCursorPos(1,1)
+    term.setTextColor(colors.lightGray)
+    print("Domain name editor")
+    term.setCursorPos(1,6)
+    term.setBackgroundColor(colors.white)
+    write("Enter new domain name: ")
+    local new_name = read()
+    local dmn = fs.open("domain_name","w")
+    local new_name = (new_name..".cc")
+    dmn.write(new_name)
+    dmn.close()
+    drawMainPage()
+end
+drawMainPage()
+os.pullEvent = os.pullEventRaw
+local function guiHandle()
+    local evnt = { os.pullEvent("mouse_click") }
+    if evnt[3] and evnt[4] ~= nil then
+        if evnt[3] >= 1 and evnt[3] <= 21 and evnt[4] >= 6 and evnt[4] <= 9 then
+            drawDomainPage()
+        elseif evnt[3] >= 31 and evnt[3] <= 51 and evnt[4] >= 6 and evnt[4] <= 9 then
+            drawDetailsPage()
+       elseif evnt[3] >= 1 and evnt[3] <= size[1] and evnt[4] >= 11 and evnt[4] <= 14 then
+            term.setBackgroundColor(colors.white)
+            term.clear()
+            term.setTextColor(colors.cyan)
+            term.setCursorPos(1,1)
+            print("Restarting...")
+            sleep(0.5)
+            os.reboot()
+        elseif evnt[3] >= 1 and evnt[3] <= size[1] and evnt[4] >= 16 and evnt[4] <= 19 then
+            term.setBackgroundColor(colors.white)
+            term.clear()
+            term.setTextColor(colors.cyan)
+            term.setCursorPos(1,1)
+            print("Shutting down...")
+            sleep(1)
+            os.shutdown()
+        end
+    end
+end
+    while true do
+        if br then
+            break
+        end
+        parallel.waitForAny(guiHandle,webServerMain)
