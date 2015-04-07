@@ -56,17 +56,15 @@ if latest ~= false then
        end
     end
 end
-local notes = get("aWYQXFyW")
 term.setBackgroundColor(colors.white)
 term.clear()
 paintutils.drawFilledBox(1,1,size[1],4,colors.gray)
 term.setTextColor(colors.lightGray)
 term.setCursorPos(1,1)
-print("Notes: ")
 term.setBackgroundColor(colors.white)
 term.setCursorPos(1,6)
 term.setTextColor(colors.cyan)
-print(notes)
+print("Copyright (C) 2015  Sapphire This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.")
 sleep(5)
 local error_404 = "term.setBackgroundColor(colors.white) term.clear() term.setCursorPos(1,1) term.setTextColor(colors.lightGray) print('404') print('Sorry, the page was not found on the server!')"
 local error_400 = "term.setBackgroundColor(colors.white) term.clear() term.setCursorPos(1,1) term.setTextColor(colors.lightGray) print('400') print('Send bad reqest')"
