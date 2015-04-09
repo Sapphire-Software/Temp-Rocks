@@ -11,9 +11,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
---]]|------------------------------------|
+|------------------------------------|
+--]]
  
-local version = "15.8 GN1"
+local version = "15.9 GN1 DONT UPDATE!"
 local size = { term.getSize() }
 local function get(paste)
     local paste = textutils.urlEncode(paste)
