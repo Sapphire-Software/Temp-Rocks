@@ -1,0 +1,45 @@
+@font-face {
+	font-family: main;
+	src: url(IQHow_FEYlDC4Gzy_m8fcgFhaRv2pGgT5Kf0An0s4MM.woff);
+}
+html {
+	font-family: main;
+	background-color: #2B2B2B;
+
+}
+* {
+	padding: 0px;
+	margin: 0px;
+}
+.rocks {
+	color: #ECECEC;
+}
+.logo {
+	color: #FFFF66;
+	font-family: DejaVu Sans;
+	display: inline-block;
+	margin-left: 2%;
+	margin-top: 2%;
+	letter-spacing: 3px;
+	margin-bottom: 3%;
+}
+.comeing {
+	display: inline-block;
+	margin-left: 3%;
+	color: #ECECEC;
+	border-bottom: 1px dotted;
+}
+.tbar {
+	border-bottom: 2px solid;
+	border-bottom-color: #ECECEC;
+}
+#heading {
+	color: #FFFF66;
+	font-family: DejaVu Sans;
+	letter-spacing: 3px;
+	margin-top: 10%;
+	margin-bottom: 2%;
+}
+#sub {
+	color: #ECECEC;
+}
